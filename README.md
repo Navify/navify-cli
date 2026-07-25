@@ -1,8 +1,13 @@
-<h3 align="center"><a href="https://navify.app/"><img src="https://i.imgur.com/iwcLITQ.png" width="600px"></a></h3>
 <p align="center">
-  <a href="https://goreportcard.com/report/github.com/navify/cli"><img src="https://goreportcard.com/badge/github.com/navify/cli"></a>
-  <a href="https://github.com/navify/cli/releases/latest"><img src="https://img.shields.io/github/release/navify/cli/all.svg?colorB=97CA00&label=latest%20version"></a>
-  <a href="https://github.com/navify/cli/releases"><img src="https://img.shields.io/github/downloads/navify/cli/total.svg?colorB=97CA00&label=total%20downloads"></a>
+  <img src=".github/assets/logo.png" alt="Navify logo" width="220">
+</p>
+
+<h1 align="center">Navify CLI</h1>
+
+<p align="center">
+  <a href="https://goreportcard.com/report/github.com/Navify/navify-cli"><img src="https://goreportcard.com/badge/github.com/Navify/navify-cli"></a>
+  <a href="https://github.com/Navify/navify-cli/releases/latest"><img src="https://img.shields.io/github/v/release/Navify/navify-cli?label=latest%20version"></a>
+  <a href="https://github.com/Navify/navify-cli/releases"><img src="https://img.shields.io/github/downloads/Navify/navify-cli/total.svg?label=total%20downloads"></a>
   <a href="https://discord.gg/VnevqPp2Rr"><img src="https://img.shields.io/discord/842219447716151306?label=chat&logo=discord&logoColor=discord"></a>
 </p>
 
@@ -10,8 +15,6 @@
 
 Command-line tool to customize the official Spotify client.
 Supports Windows, MacOS and Linux.
-
-<img src=".github/assets/logo.png" alt="Navify logo" align="right" width="360">
 
 ### Installation
 
@@ -26,7 +29,7 @@ install.bat
 You can also run the PowerShell installer directly:
 
 ```powershell
-iwr -useb https://raw.githubusercontent.com/navify/cli/main/install.ps1 | iex
+iwr -useb https://raw.githubusercontent.com/Navify/navify-cli/main/install.ps1 | iex
 ```
 
 #### macOS and Linux
