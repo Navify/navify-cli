@@ -11,7 +11,7 @@
 Command-line tool to customize the official Spotify client.
 Supports Windows, MacOS and Linux.
 
-<img src=".github/assets/logo.png" alt="img" align="right" width="560px" height="400px">
+<img src=".github/assets/logo.png" alt="Navify logo" align="right" width="360">
 
 ### Installation
 
