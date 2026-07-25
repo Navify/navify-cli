@@ -1,0 +1,19 @@
+.Root__right-sidebar {
+  display: none !important;
+}
+
+.Root__main-view {
+  grid-column-end: -1 !important;
+}
+
+.main-buddyFeed-buddyFeedRoot,
+[data-testid="right-sidebar"] {
+  display: none !important;
+}
+
+.main-topBar-topbarContentWrapper,
+.main-view-container__scroll-node-child {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+}

@@ -1,0 +1,19 @@
+# Executables
+bin
+cli
+navify
+navify-cli
+*.exe
+
+# MacOS
+.DS_Store
+
+# Node.js
+node_modules
+
+# Generated wrapper bundle
+jsHelper/navifyWrapper.js
+jsHelper/navifyWrapper.js.map
+
+# Logs
+install.log

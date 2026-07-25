@@ -1,0 +1,5 @@
+{
+  "name": "Listening Journal",
+  "icon": "<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M48 24h136c13 0 24 11 24 24v160c0 13-11 24-24 24H48V24zm32 40v24h96V64H80zm0 48v16h96v-16H80zm0 40v16h72v-16H80z\"/><path d=\"M32 48h24v32H32zm0 64h24v32H32zm0 64h24v32H32z\"/></svg>",
+  "active-icon": "<svg viewBox=\"0 0 256 256\" fill=\"currentColor\"><path d=\"M48 24h136c13 0 24 11 24 24v160c0 13-11 24-24 24H48V24zm32 40v24h96V64H80zm0 48v16h96v-16H80zm0 40v16h72v-16H80z\"/><path d=\"M32 48h24v32H32zm0 64h24v32H32zm0 64h24v32H32z\"/></svg>"
+}
