@@ -14,6 +14,8 @@
 ---
 
 Command-line tool to customize the official Spotify client.
+
+Created by [HitBoyXx23](https://github.com/HitBoyXx23).
 Supports Windows, MacOS and Linux.
 
 ### Installation
