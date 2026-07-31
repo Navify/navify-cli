@@ -117,9 +117,7 @@ export function exposeRuntimeResolvers({ cache, chunks, modules, functionModules
     ([, value]) => fnStr(value).includes('value:"playlist"') && fnStr(value).includes("canView") && fnStr(value).includes("permissions"),
   );
   if (playlistMenuChunk && !Navify.ReactComponent?.PlaylistMenu) {
-    Navify.ReactComponent.PlaylistMenu = Object.values(require(playlistMenuChunk[0])).find(
-      (m) => typeof m === "function" || typeof m === "object",
-    );
+    Navify.ReactComponent.PlaylistMenu = Object.values(require(playlistMenuChunk[0])).find((m) => typeof m === "function" || typeof m === "object");
   }
 
   const infiniteQueryChunk = chunks.find(([_, value]) => fnStr(value).includes("fetchPreviousPage") && fnStr(value).includes("getOptimisticResult"));

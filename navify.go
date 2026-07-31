@@ -13,11 +13,11 @@ import (
 	"sync"
 
 	colorable "github.com/mattn/go-colorable"
-	"github.com/pterm/pterm"
 	"github.com/navify/cli/src/cmd"
 	spotifystatus "github.com/navify/cli/src/status/spotify"
 	"github.com/navify/cli/src/utils"
 	"github.com/navify/cli/src/utils/isAdmin"
+	"github.com/pterm/pterm"
 )
 
 var (

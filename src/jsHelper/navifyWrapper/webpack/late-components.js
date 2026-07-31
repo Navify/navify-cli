@@ -33,8 +33,7 @@ export function waitForLateComponents({ require, refreshNavLinks }) {
       Navify.ReactComponent.Slider = wrapProvider(newFunctionModules.find((m) => fnStr(m).includes("progressBarRef")));
     if (!Navify.ReactComponent.Toggle)
       Navify.ReactComponent.Toggle = newFunctionModules.find((m) => fnStr(m).includes("onSelected") && fnStr(m).includes('type:"checkbox"'));
-    if (!Navify.ReactComponent.Dropdown)
-      Navify.ReactComponent.Dropdown = findDropdownComponent({ modules: newModules, chunks: newChunks, require });
+    if (!Navify.ReactComponent.Dropdown) Navify.ReactComponent.Dropdown = findDropdownComponent({ modules: newModules, chunks: newChunks, require });
     if (!Navify.ReactComponent.Toggle) {
       const toggleChunk = newChunks.find(([, value]) => fnStr(value).includes("onSelected") && fnStr(value).includes('type:"checkbox"'));
       if (toggleChunk) {

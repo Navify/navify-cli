@@ -3,9 +3,9 @@ import { waitFor } from "./shared/async.js";
 import { exposeReactComponentsUI } from "./webpack/component-resolvers.js";
 import { waitForLateComponents } from "./webpack/late-components.js";
 import { getModuleInventory, groupBy } from "./webpack/module-inventory.js";
+import { createNavifyBindings } from "./webpack/navify-bindings.js";
 import { exposeRuntimeResolvers } from "./webpack/runtime-resolvers.js";
 import { createScrollableContainer } from "./webpack/scrollable-container.js";
-import { createNavifyBindings } from "./webpack/navify-bindings.js";
 import { waitForURI } from "./webpack/uri.js";
 
 void (async function hotloadWebpackModules() {

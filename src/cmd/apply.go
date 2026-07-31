@@ -71,15 +71,15 @@ func Apply(navifyVersion string) {
 
 	spinner, _ := utils.Spinner.Start("Applying additional modifications")
 	apply.AdditionalOptions(appDestPath, apply.Flag{
-		CurrentTheme:         settingSection.Key("current_theme").MustString(""),
-		ColorScheme:          settingSection.Key("color_scheme").MustString(""),
-		InjectThemeJS:        injectJS,
+		CurrentTheme:      settingSection.Key("current_theme").MustString(""),
+		ColorScheme:       settingSection.Key("color_scheme").MustString(""),
+		InjectThemeJS:     injectJS,
 		CheckNavifyUpdate: settingSection.Key("check_navify_update").MustBool(false),
-		Extension:            extensionList,
-		CustomApp:            customAppsList,
-		SidebarConfig:        featureSection.Key("sidebar_config").MustBool(false),
-		HomeConfig:           featureSection.Key("home_config").MustBool(false),
-		ExpFeatures:          featureSection.Key("experimental_features").MustBool(false),
+		Extension:         extensionList,
+		CustomApp:         customAppsList,
+		SidebarConfig:     featureSection.Key("sidebar_config").MustBool(false),
+		HomeConfig:        featureSection.Key("home_config").MustBool(false),
+		ExpFeatures:       featureSection.Key("experimental_features").MustBool(false),
 		NavifyVer:         backupSection.Key("with").MustString(""),
 	})
 	spinner.Success("Applied additional modifications")

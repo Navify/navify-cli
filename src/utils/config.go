@@ -23,7 +23,7 @@ var (
 			"replace_colors":         "0",
 			"overwrite_assets":       "0",
 			"spotify_launch_flags":   "",
-			"check_navify_update": "1",
+			"check_navify_update":    "1",
 			"always_enable_devtools": "0",
 		},
 		"Preprocesses": {

@@ -14,8 +14,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/pterm/pterm"
 	"github.com/navify/cli/src/utils"
+	"github.com/pterm/pterm"
 )
 
 // Flag enables/disables preprocesses to be applied

@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	navifyFolder         = utils.GetNavifyFolder()
+	navifyFolder            = utils.GetNavifyFolder()
 	rawFolder, themedFolder = getExtractFolder()
 	backupFolder            = utils.GetStateFolder("Backup")
 	userThemesFolder        = utils.GetSubFolder(navifyFolder, "Themes")

@@ -183,9 +183,7 @@ void (async function waitUserAPI() {
 
   // product_state was renamed to product_state_service in Spotify 1.2.21
   const productState =
-    Navify.Platform.UserAPI?._product_state ||
-    Navify.Platform.UserAPI?._product_state_service ||
-    Navify.Platform?.ProductStateAPI.productStateApi;
+    Navify.Platform.UserAPI?._product_state || Navify.Platform.UserAPI?._product_state_service || Navify.Platform?.ProductStateAPI.productStateApi;
 
   Navify.AppTitle = {
     set: async (name) => {
