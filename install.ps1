@@ -2,8 +2,10 @@ $ErrorActionPreference = 'Stop'
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 $navifyFolderPath = "$env:LOCALAPPDATA\navify"
+$navifyDataPath = "$env:APPDATA\navify"
 $navifyOldFolderPath = "$HOME\navify-cli"
 $repoFolderPath = Split-Path -Parent $MyInvocation.MyCommand.Path
+$marketplaceSourcePath = Join-Path (Split-Path -Parent $repoFolderPath) 'marketplace\dist'
 
 function Write-Success {
   [CmdletBinding()]
@@ -132,18 +134,47 @@ function Install-Navify {
     }
     Copy-Item -LiteralPath $exePath -Destination (Join-Path -Path $navifyFolderPath -ChildPath 'navify.exe') -Force
     Copy-Item -LiteralPath (Join-Path -Path $repoFolderPath -ChildPath 'css-map.json') -Destination (Join-Path -Path $navifyFolderPath -ChildPath 'css-map.json') -Force
+    if (-not (Test-Path -Path $navifyDataPath)) {
+      New-Item -Path $navifyDataPath -ItemType Directory -Force | Out-Null
+    }
+    if (-not (Test-Path -Path $navifyDataPath)) {
+      New-Item -Path $navifyDataPath -ItemType Directory -Force | Out-Null
+    }
     foreach ($folder in @('Themes', 'Extensions', 'CustomApps', 'jsHelper')) {
       $source = Join-Path -Path $repoFolderPath -ChildPath $folder
       if (Test-Path -LiteralPath $source) {
-        Copy-Item -LiteralPath $source -Destination $navifyFolderPath -Recurse -Force
+        Copy-Item -LiteralPath $source -Destination $navifyDataPath -Recurse -Force
       }
     }
+    Copy-Item -LiteralPath (Join-Path -Path $repoFolderPath -ChildPath 'css-map.json') -Destination (Join-Path -Path $navifyDataPath -ChildPath 'css-map.json') -Force
+    Copy-Item -LiteralPath (Join-Path -Path $repoFolderPath -ChildPath 'jsHelper') -Destination $navifyFolderPath -Recurse -Force
+    Copy-Item -LiteralPath (Join-Path -Path $repoFolderPath -ChildPath 'css-map.json') -Destination (Join-Path -Path $navifyDataPath -ChildPath 'css-map.json') -Force
+    Copy-Item -LiteralPath (Join-Path -Path $repoFolderPath -ChildPath 'jsHelper') -Destination $navifyFolderPath -Recurse -Force
     Write-Success
 
     Add-NavifyToPath
   }
   end {
-    Write-Host -Object 'navify was successfully installed with Spotify default styling.' -ForegroundColor 'Green'
+    Write-Host -Object 'Navify and Marketplace were successfully installed.' -ForegroundColor 'Green'
+  }
+}
+
+function Install-Marketplace {
+  [CmdletBinding()]
+  param ()
+  process {
+    Write-Host -Object 'Installing Marketplace...' -NoNewline
+    $manifestPath = Join-Path -Path $marketplaceSourcePath -ChildPath 'manifest.json'
+    if (-not (Test-Path -LiteralPath $manifestPath)) {
+      Write-Unsuccess
+      throw 'Marketplace build is missing. Run pnpm build:prod in the marketplace folder.'
+    }
+
+    $marketplaceDestinationPath = Join-Path -Path $navifyDataPath -ChildPath 'CustomApps\marketplace'
+    New-Item -Path $marketplaceDestinationPath -ItemType Directory -Force | Out-Null
+    Copy-Item -Path (Join-Path -Path $marketplaceSourcePath -ChildPath '*') -Destination $marketplaceDestinationPath -Recurse -Force
+    Write-Success
+
   }
 }
 
@@ -179,6 +210,7 @@ else {
 
 Move-OldNavifyFolder
 Install-Navify
+Install-Marketplace
 Write-Host -Object "`nRun" -NoNewline
 Write-Host -Object ' navify -h ' -NoNewline -ForegroundColor 'Cyan'
 Write-Host -Object 'to get started'
