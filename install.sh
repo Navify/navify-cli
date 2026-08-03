@@ -52,7 +52,7 @@ command -v tar >/dev/null || { log "tar isn't installed!" >&2; exit 1; }
 command -v grep >/dev/null || { log "grep isn't installed!" >&2; exit 1; }
 
 # download uri
-releases_uri=https://github.com/navify/cli/releases
+releases_uri=https://github.com/Navify/navify-cli/releases
 if [ -z "$tag" ]; then
     tag=$(curl -LsH 'Accept: application/json' $releases_uri/latest)
     tag=${tag%\,\"update_url*}
@@ -155,4 +155,4 @@ if [ "$choice" = "N" ] || [ "$choice" = "n" ]; then
     exit 0
 fi
 echo "Starting the navify Marketplace installation script.."
-curl -fsSL "https://raw.githubusercontent.com/navify/navify-marketplace/main/resources/install.sh" | sh
+curl -fsSL "https://raw.githubusercontent.com/Navify/navify-marketplace/main/resources/install.sh" | sh

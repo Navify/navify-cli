@@ -14,6 +14,8 @@
 ---
 
 Command-line tool to customize the official Spotify client.
+
+Created by [HitBoyXx23](https://github.com/HitBoyXx23).
 Supports Windows, MacOS and Linux.
 
 ### Installation
@@ -37,7 +39,7 @@ iwr -useb https://raw.githubusercontent.com/Navify/navify-cli/main/install.ps1 |
 Run:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/navify/cli/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/Navify/navify-cli/main/install.sh | sh
 ```
 
 #### Build from source
@@ -45,8 +47,8 @@ curl -fsSL https://raw.githubusercontent.com/navify/cli/main/install.sh | sh
 Requires Go and pnpm.
 
 ```sh
-git clone https://github.com/navify/cli.git
-cd cli
+git clone https://github.com/Navify/navify-cli.git
+cd navify-cli
 go build -o navify
 ```
 
@@ -82,7 +84,7 @@ ${XDG_CONFIG_HOME:-$HOME/.config}/navify/Themes/YourTheme
 macOS:
 
 ```text
-$HOME/.config/navify/Themes/YourTheme
+${XDG_CONFIG_HOME:-$HOME/.config}/navify/Themes/YourTheme
 ```
 
 Navify also accepts `NAVIFY_CONFIG` when you want to store Themes, Extensions, and CustomApps in a different directory. After copying a theme, select it with `navify config current_theme YourTheme`, enable the theme settings, and run `navify apply`.

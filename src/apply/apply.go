@@ -12,17 +12,17 @@ import (
 
 // Flag enables/disables additional feature
 type Flag struct {
-	CurrentTheme         string
-	ColorScheme          string
-	InjectThemeJS        bool
+	CurrentTheme      string
+	ColorScheme       string
+	InjectThemeJS     bool
 	CheckNavifyUpdate bool
-	Extension            []string
-	CustomApp            []string
-	SidebarConfig        bool
-	HomeConfig           bool
-	ExpFeatures          bool
+	Extension         []string
+	CustomApp         []string
+	SidebarConfig     bool
+	HomeConfig        bool
+	ExpFeatures       bool
 	NavifyVer         string
-	SpotifyVer           string
+	SpotifyVer        string
 }
 
 // AdditionalOptions .

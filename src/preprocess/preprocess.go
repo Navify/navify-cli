@@ -14,8 +14,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/pterm/pterm"
 	"github.com/navify/cli/src/utils"
+	"github.com/pterm/pterm"
 )
 
 // Flag enables/disables preprocesses to be applied
@@ -50,7 +50,7 @@ func applyPatches(input string, patches []Patch) string {
 }
 
 func readRemoteCssMap(tag string, cssTranslationMap *map[string]string) error {
-	var cssMapURL string = "https://raw.githubusercontent.com/navify/cli/" + tag + "/css-map.json"
+	var cssMapURL string = "https://raw.githubusercontent.com/Navify/navify-cli/" + tag + "/css-map.json"
 	cssMapResp, err := http.Get(cssMapURL)
 	if err != nil {
 		return err
@@ -140,6 +140,11 @@ func Start(version string, spotifyBasePath string, extractedAppsPath string, fla
 		}
 	case "darwin":
 		spotifyBinaryPath = filepath.Join(spotifyBasePath, "..", "MacOS", "Spotify")
+	case "linux":
+		candidate := filepath.Join(spotifyBasePath, "spotify")
+		if _, err := os.Stat(candidate); err == nil {
+			spotifyBinaryPath = candidate
+		}
 	}
 
 	if spotifyBinaryPath != "" {
@@ -1140,7 +1145,7 @@ func FetchLatestTagMatchingVersion(version string) (string, error) {
 	if version == "Dev" {
 		return "Dev", nil
 	}
-	res, err := http.Get("https://api.github.com/repos/navify/cli/releases")
+	res, err := http.Get("https://api.github.com/repos/Navify/navify-cli/releases")
 	if err != nil {
 		return "", err
 	}

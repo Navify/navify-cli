@@ -45,29 +45,33 @@ func EnableDevTools() {
 			filePath = filepath.Join(dir, "offline.bnk")
 		}
 	case "linux":
-		{
-			homePath := os.Getenv("HOME")
-			snapSpotifyHome := homePath + "/snap/spotify/common"
-			if _, err := os.Stat(snapSpotifyHome); err == nil {
-				homePath = snapSpotifyHome
+		homePath := os.Getenv("HOME")
+		candidates := []string{}
+
+		flatpakHome := filepath.Join(homePath, ".var", "app", "com.spotify.Client")
+		if _, err := os.Stat(flatpakHome); err == nil {
+			candidates = append(candidates, filepath.Join(flatpakHome, "cache", "spotify", "offline.bnk"))
+		}
+
+		snapSpotifyHome := filepath.Join(homePath, "snap", "spotify", "common")
+		if _, err := os.Stat(snapSpotifyHome); err == nil {
+			candidates = append(candidates, filepath.Join(snapSpotifyHome, ".cache", "spotify", "offline.bnk"))
+		}
+
+		cacheHome := os.Getenv("XDG_CACHE_HOME")
+		if cacheHome == "" {
+			cacheHome = filepath.Join(homePath, ".cache")
+		}
+		candidates = append(candidates, filepath.Join(cacheHome, "spotify", "offline.bnk"))
+
+		for _, candidate := range candidates {
+			if _, err := os.Stat(candidate); err == nil {
+				filePath = candidate
+				break
 			}
-
-			flatpakHome := homePath + "/.var/app/com.spotify.Client"
-			if _, err := os.Stat(flatpakHome); err == nil {
-				homePath = flatpakHome
-				filePath = homePath + "/cache/spotify/offline.bnk"
-			} else {
-				cacheHome := os.Getenv("XDG_CACHE_HOME")
-				if cacheHome == "" {
-					cacheHome = homePath + "/.cache"
-				}
-
-				filePath = cacheHome + "/spotify/offline.bnk"
-			}
-
 		}
 	case "darwin":
-		filePath = os.Getenv("HOME") + "/Library/Application Support/Spotify/PersistentCache/offline.bnk"
+		filePath = filepath.Join(os.Getenv("HOME"), "Library", "Application Support", "Spotify", "PersistentCache", "offline.bnk")
 	}
 
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {

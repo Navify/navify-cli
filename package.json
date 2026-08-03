@@ -1,6 +1,7 @@
 {
   "name": "@navify/cli",
   "private": true,
+  "author": "HitBoyXx23",
   "type": "module",
   "scripts": {
     "build:wrapper": "node scripts/build-wrapper.mjs",

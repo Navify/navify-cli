@@ -283,7 +283,7 @@ function PopupLyrics() {
 
 			const body = await fetch(finalURL, {
 				headers: {
-					"x-user-agent": `navify v${Navify.Config.version} (https://github.com/navify/cli)`,
+					"x-user-agent": `navify v${Navify.Config.version} (https://github.com/Navify/navify-cli)`,
 				},
 			});
 
