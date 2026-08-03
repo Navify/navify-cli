@@ -501,7 +501,7 @@ upgrade|update      Update navify to the latest version if an update is availabl
 -v, --version       Print version number and quit
 
 For config information, run "navify -h config".
-For more information and reporting bugs: https://github.com/navify/cli/`)
+For more information and reporting bugs: https://github.com/Navify/navify-cli/`)
 }
 
 func helpConfig() {

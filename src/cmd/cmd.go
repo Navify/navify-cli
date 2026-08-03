@@ -76,7 +76,7 @@ func InitPaths() {
 			os.Exit(1)
 		}
 
-		spotifyPath = actualSpotifyPath
+		spotifyPath = utils.ReplaceEnvVarsInString(actualSpotifyPath)
 		settingSection.Key("spotify_path").SetValue(spotifyPath)
 		if err := cfg.Write(); err != nil {
 			utils.PrintWarning(fmt.Sprintf("Failed to save config: %s", err.Error()))

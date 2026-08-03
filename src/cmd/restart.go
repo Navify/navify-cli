@@ -22,10 +22,12 @@ func SpotifyKill() {
 		_, err := isRunning.Output()
 		if err == nil {
 			exec.Command("pkill", "-x", "spotify").Run()
+		} else {
+			exec.Command("pkill", "-f", "spotify").Run()
 		}
 	case "darwin":
-		isRunning := exec.Command("sh", "-c", "ps aux | grep 'Spotify' | grep -v grep")
-		_, err := isRunning.CombinedOutput()
+		isRunning := exec.Command("pgrep", "-x", "Spotify")
+		_, err := isRunning.Output()
 		if err == nil {
 			exec.Command("pkill", "-x", "Spotify").Run()
 		}
@@ -57,9 +59,26 @@ func SpotifyStart(flags ...string) {
 			exec.Command(filepath.Join(spotifyPath, "spotify.exe"), flags...).Start()
 		}
 	case "linux":
-		exec.Command(filepath.Join(spotifyPath, "spotify"), flags...).Start()
+		spotifyBin := filepath.Join(spotifyPath, "spotify")
+		if strings.Contains(spotifyPath, "flatpak") {
+			args := append([]string{"run", "com.spotify.Client"}, flags...)
+			if err := exec.Command("flatpak", args...).Start(); err == nil {
+				return
+			}
+		}
+		if strings.Contains(spotifyPath, "/snap/") {
+			args := append([]string{"run", "spotify"}, flags...)
+			if err := exec.Command("snap", args...).Start(); err == nil {
+				return
+			}
+		}
+		exec.Command(spotifyBin, flags...).Start()
 	case "darwin":
-		flags = append([]string{"-a", "/Applications/Spotify.app", "--args"}, flags...)
+		appPath := filepath.Clean(filepath.Join(spotifyPath, "..", ".."))
+		if filepath.Base(appPath) != "Spotify.app" {
+			appPath = "/Applications/Spotify.app"
+		}
+		flags = append([]string{"-a", appPath, "--args"}, flags...)
 		exec.Command("open", flags...).Start()
 	}
 }

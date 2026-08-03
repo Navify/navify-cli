@@ -97,18 +97,13 @@ func GetNavifyFolder() string {
 		parent := os.Getenv("APPDATA")
 
 		result = filepath.Join(parent, "navify")
-	} else if runtime.GOOS == "linux" {
+	} else if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
 		parent, isAvailable := os.LookupEnv("XDG_CONFIG_HOME")
 
 		if !isAvailable || len(parent) == 0 {
 			parent = filepath.Join(os.Getenv("HOME"), ".config")
 			CheckExistAndCreate(parent)
 		}
-
-		result = filepath.Join(parent, "navify")
-	} else if runtime.GOOS == "darwin" {
-		parent := filepath.Join(os.Getenv("HOME"), ".config")
-		CheckExistAndCreate(parent)
 
 		result = filepath.Join(parent, "navify")
 	}
@@ -128,18 +123,13 @@ func GetStateFolder(name string) string {
 		parent := os.Getenv("APPDATA")
 
 		result = filepath.Join(parent, "navify")
-	} else if runtime.GOOS == "linux" {
+	} else if runtime.GOOS == "linux" || runtime.GOOS == "darwin" {
 		parent, isAvailable := os.LookupEnv("XDG_STATE_HOME")
 
 		if !isAvailable || len(parent) == 0 {
 			parent = filepath.Join(os.Getenv("HOME"), ".local", "state")
 			CheckExistAndCreate(parent)
 		}
-
-		result = filepath.Join(parent, "navify")
-	} else if runtime.GOOS == "darwin" {
-		parent := filepath.Join(os.Getenv("HOME"), ".local", "state")
-		CheckExistAndCreate(parent)
 
 		result = filepath.Join(parent, "navify")
 	}

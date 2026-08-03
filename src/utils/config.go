@@ -291,6 +291,9 @@ func linuxApp() string {
 					continue
 				}
 
+				if !filepath.IsAbs(binDest) {
+					binDest = filepath.Join(filepath.Dir(v), binDest)
+				}
 				bin = binDest
 			}
 
@@ -314,15 +317,15 @@ func linuxApp() string {
 		"$HOME/.local/share/flatpak/app/com.spotify.Client/aarch64/stable/active/files/extra/share/spotify/",
 		"$HOME/.local/share/spotify-launcher/install/usr/share/spotify/",
 		"$HOME/.local/share/spotify-launcher/install/usr/share/spotify-client/",
-		"$HOME/.var/app/com.spotify.Client/data/spotify/",
-		"$HOME/snap/spotify/common/spotify/",
+		"/snap/spotify/current/usr/share/spotify/",
 	}
 
 	for _, v := range potentialList {
-		_, err := os.Stat(filepath.Join(ReplaceEnvVarsInString(v), "Apps"))
-		_, err2 := os.Stat(filepath.Join(ReplaceEnvVarsInString(v), "spotify"))
+		resolved := ReplaceEnvVarsInString(v)
+		_, err := os.Stat(filepath.Join(resolved, "Apps"))
+		_, err2 := os.Stat(filepath.Join(resolved, "spotify"))
 		if err == nil && err2 == nil {
-			return v
+			return resolved
 		}
 	}
 
@@ -347,23 +350,31 @@ func linuxPrefs() string {
 		}
 	}
 
+	PrintError("No valid path options found, ensure you have Spotify installed and have ran it for at least 30 seconds")
 	return ""
 }
 
 func darwinApp() string {
-	path := filepath.Join("/Applications", "Spotify.app", "Contents", "Resources")
-	if _, err := os.Stat(path); err == nil {
-		return path
+	potentialList := []string{
+		filepath.Join("/Applications", "Spotify.app", "Contents", "Resources"),
+		filepath.Join(os.Getenv("HOME"), "Applications", "Spotify.app", "Contents", "Resources"),
+	}
+
+	for _, path := range potentialList {
+		if _, err := os.Stat(path); err == nil {
+			return path
+		}
 	}
 
 	return ""
 }
 
 func darwinPrefs() string {
-	pref := filepath.Join(os.Getenv("HOME"), "Library/Application Support/Spotify/prefs")
+	pref := filepath.Join(os.Getenv("HOME"), "Library", "Application Support", "Spotify", "prefs")
 	if _, err := os.Stat(pref); err == nil {
 		return pref
 	}
 
+	PrintError("No valid path options found, ensure you have Spotify installed and have ran it for at least 30 seconds")
 	return ""
 }
