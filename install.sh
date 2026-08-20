@@ -1,158 +1,105 @@
 #!/usr/bin/env sh
-# Copyright 2022 khanhas.
-# Copyright 2023-present Navify contributors.
-# Edited from project Denoland install script (https://github.com/denoland/deno_install)
 
-set -e
+set -eu
 
+override_root=0
+tag=""
 for arg in "$@"; do
-    shift
     case "$arg" in
-        "--root") override_root=1 ;;
-        *)
-        if echo "$arg" | grep -qv "^-"; then
-            tag="$arg"
-        else
-            echo "Invalid option $arg" >&2
-            exit 1
-        fi
+        --root) override_root=1 ;;
+        -*) echo "Invalid option $arg" >&2; exit 1 ;;
+        *) tag=$arg ;;
     esac
 done
 
-is_root() {
-    [ "$(id -u)" -ne 0 ]
-}
-
-if ! is_root && [ "${override_root:-0}" -eq 0 ]; then
-    echo "The script was ran under sudo or as root. The script will now exit"
-    echo "If you hadn't intended to do this, please execute the script without root access to avoid problems with navify"
-    echo "To override this behavior, pass the '--root' parameter to this script"
-    exit
+if [ "$(id -u)" -eq 0 ] && [ "$override_root" -eq 0 ]; then
+    echo "Do not run this installer with sudo or as root." >&2
+    echo "Pass --root only when a root-owned installation is intentional." >&2
+    exit 1
 fi
 
-# wipe existing log
-> install.log :
+case "$(uname -s)-$(uname -m)" in
+    Linux-x86_64|Linux-amd64) target="linux-amd64" ;;
+    Linux-aarch64|Linux-arm64) target="linux-arm64" ;;
+    Darwin-x86_64|Darwin-amd64) target="darwin-amd64" ;;
+    Darwin-arm64|Darwin-aarch64) target="darwin-arm64" ;;
+    *) echo "Unsupported platform $(uname -s) $(uname -m)." >&2; exit 1 ;;
+esac
+
+command -v curl >/dev/null 2>&1 || { echo "curl is required" >&2; exit 1; }
+command -v tar >/dev/null 2>&1 || { echo "tar is required" >&2; exit 1; }
+command -v sed >/dev/null 2>&1 || { echo "sed is required" >&2; exit 1; }
+
+navify_install="$HOME/.navify"
+exe="$navify_install/navify"
+archive="$navify_install/navify.tar.gz"
+log_file="$navify_install/install.log"
+mkdir -p "$navify_install"
+: > "$log_file"
+
+cleanup() {
+    rm -f "$archive"
+}
+trap cleanup EXIT HUP INT TERM
 
 log() {
     echo "$1"
-    echo "[$(date +'%H:%M:%S %Y-%m-%d')]" "$1" >> install.log
+    echo "[$(date +'%H:%M:%S %Y-%m-%d')] $1" >> "$log_file"
 }
 
-case $(uname -sm) in
-    "Darwin x86_64") target="darwin-amd64" ;;
-    "Darwin arm64") target="darwin-arm64" ;;
-    "Linux x86_64") target="linux-amd64" ;;
-    "Linux aarch64") target="linux-arm64" ;;
-    *) log "Unsupported platform $(uname -sm). x86_64 and arm64 binaries for Linux and Darwin are available."; exit ;;
-esac
-
-# check for dependencies
-command -v curl >/dev/null || { log "curl isn't installed!" >&2; exit 1; }
-command -v tar >/dev/null || { log "tar isn't installed!" >&2; exit 1; }
-command -v grep >/dev/null || { log "grep isn't installed!" >&2; exit 1; }
-
-# download uri
-releases_uri=https://github.com/Navify/navify-cli/releases
 if [ -z "$tag" ]; then
-    tag=$(curl -LsH 'Accept: application/json' $releases_uri/latest)
-    tag=${tag%\,\"update_url*}
-    tag=${tag##*tag_name\":\"}
-    tag=${tag%\"}
+    tag=$(curl --fail --silent --show-error --location "https://api.github.com/repos/Navify/navify-cli/releases/latest" | sed -n 's/.*"tag_name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -n 1)
+fi
+tag=${tag#v}
+if [ -z "$tag" ]; then
+    log "Could not determine the latest Navify version."
+    exit 1
 fi
 
-tag=${tag#v}
+download_uri="https://github.com/Navify/navify-cli/releases/download/v$tag/navify-$tag-$target.tar.gz"
+log "Downloading Navify v$tag for $target"
+curl --fail --location --progress-bar --output "$archive" "$download_uri"
 
-log "FETCHING Version $tag"
-
-download_uri=$releases_uri/download/v$tag/navify-$tag-$target.tar.gz
-
-# locations
-navify_install="$HOME/.navify"
-exe="$navify_install/navify"
-tar="$navify_install/navify.tar.gz"
-
-# installing
-[ ! -d "$navify_install" ] && log "CREATING $navify_install" && mkdir -p "$navify_install"
-
-log "DOWNLOADING $download_uri"
-curl --fail --location --progress-bar --output "$tar" "$download_uri"
-
-log "EXTRACTING $tar"
-tar xzf "$tar" -C "$navify_install"
-
-log "SETTING EXECUTABLE PERMISSIONS TO $exe"
+tar -tzf "$archive" >/dev/null
+log "Installing Navify to $navify_install"
+tar -xzf "$archive" -C "$navify_install"
+if [ ! -f "$exe" ]; then
+    log "The downloaded archive did not contain the navify executable."
+    exit 1
+fi
 chmod +x "$exe"
 
-log "REMOVING $tar"
-rm "$tar"
-
-notfound() {
-    cat << EOINFO
-Manually add the directory to your \$PATH through your shell profile
-export NAVIFY_INSTALL="$navify_install"
-export PATH="\$PATH:$navify_install"
-EOINFO
-}
-
-endswith_newline() {
-    [ "$(od -An -c "$1" | tail -1 | grep -o '.$')" = "\n" ]
-}
-
-check() {
-    path="export PATH=\$PATH:$navify_install"
-    shellrc=$HOME/$1
-
-    if [ "$1" = ".zshrc" ] && [ -n "${ZDOTDIR}" ]; then
-        shellrc=$ZDOTDIR/$1
-    fi
-
-    # Create shellrc if it doesn't exist
-    if ! [ -f "$shellrc" ]; then
-        log "CREATING $shellrc"
-        touch "$shellrc"
-    fi
-
-    # Still checking again, in case touch command failed
-    if [ -f "$shellrc" ]; then
-        if ! grep -q "$navify_install" "$shellrc"; then
-            log "APPENDING $navify_install to PATH in $shellrc"
-            if ! endswith_newline "$shellrc"; then
-                echo >> "$shellrc"
-            fi
-            echo "${2:-$path}" >> "$shellrc"
-            export PATH="$navify_install:$PATH"
-        else
-            log "navify path already set in $shellrc, continuing..."
-        fi
-    else
-        notfound
+add_to_profile() {
+    shellrc=$1
+    path_line=$2
+    shellrc_dir=${shellrc%/*}
+    mkdir -p "$shellrc_dir"
+    touch "$shellrc"
+    if ! grep -Fq "$navify_install" "$shellrc"; then
+        printf '\n%s\n' "$path_line" >> "$shellrc"
+        log "Added $navify_install to PATH in $shellrc"
     fi
 }
 
-case $SHELL in
-    *zsh) check ".zshrc" ;;
-    *bash)
-        [ -f "$HOME/.bashrc" ] && check ".bashrc"
-        [ -f "$HOME/.bash_profile" ] && check ".bash_profile"
-    ;;
-    *fish) check ".config/fish/config.fish" "fish_add_path $navify_install" ;;
-    *) notfound ;;
+case "${SHELL:-}" in
+    *zsh) add_to_profile "${ZDOTDIR:-$HOME}/.zshrc" "export PATH=\"$navify_install:\$PATH\"" ;;
+    *fish) add_to_profile "$HOME/.config/fish/config.fish" "fish_add_path \"$navify_install\"" ;;
+    *) add_to_profile "$HOME/.bashrc" "export PATH=\"$navify_install:\$PATH\"" ;;
 esac
+export PATH="$navify_install:$PATH"
 
-case ":$PATH:" in
-    *":$navify_install:"*) ;;
-    *) export PATH="$navify_install:$PATH" ;;
-esac
+log "Navify v$tag was installed successfully."
+log "Run 'navify --help' to get started."
 
-echo
-log "navify v$tag was installed successfully to $navify_install"
-log "Run 'navify --help' to get started"
-
-echo "Do you want to install navify Marketplace? (Y/n)"
-read -r choice < /dev/tty
-if [ "$choice" = "N" ] || [ "$choice" = "n" ]; then
-    echo "navify Marketplace installation aborted"
-    exit 0
+choice=${NAVIFY_INSTALL_MARKETPLACE:-}
+if [ -z "$choice" ] && [ -r /dev/tty ]; then
+    printf 'Install Navify Marketplace? [Y/n] '
+    read -r choice < /dev/tty || choice=""
 fi
-echo "Starting the navify Marketplace installation script.."
-curl -fsSL "https://raw.githubusercontent.com/Navify/navify-marketplace/main/resources/install.sh" | sh
+case "$choice" in
+    n|N|no|NO|false|0) log "Marketplace installation skipped." ;;
+    *)
+        log "Installing Navify Marketplace."
+        curl --fail --silent --show-error --location "https://raw.githubusercontent.com/Navify/navify-marketplace/main/resources/install.sh" | sh
+        ;;
+esac
