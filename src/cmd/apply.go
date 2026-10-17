@@ -367,7 +367,7 @@ func RefreshApps(list ...string) {
 		}
 
 		jsTemplate := fmt.Sprintf(
-			`((globalScope)=>((globalScope.rspackChunkclient_web=globalScope.rspackChunkclient_web||globalScope.webpackChunkclient_web||[]),(globalScope.webpackChunkclient_web=globalScope.webpackChunkclient_web||globalScope.rspackChunkclient_web)))
+			`((globalScope)=>globalScope.rspackChunk||globalScope.rspackChunkclient_web||globalScope.webpackChunkclient_web||[])
 ("undefined"!=typeof self?self:global).push([["%s"],{"%s":(e,t,n)=>{
 "use strict";n.r(t),n.d(t,{default:()=>render});
 %s
