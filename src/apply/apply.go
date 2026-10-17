@@ -360,7 +360,7 @@ func insertCustomAppChunkMap(jsPath string, flags Flag) {
 
 		utils.ReplaceOnce(
 			&content,
-			`(\.f\.miniCss=function\(\w+,\w+\).*?\(\{)([0-9:,]+)(\}\)\[\w+\])`,
+			`(\.f\.miniCss=function\(\w+,\w+(?:,\w+)?\).*?\(\{)([0-9:,]+)(\}\)\[\w+\])`,
 			func(submatches ...string) string {
 				return fmt.Sprintf("%s%s%s%s", submatches[1], submatches[2], cssEnableMap, submatches[3])
 			})
@@ -408,7 +408,7 @@ func insertCustomApp(jsPath string, flags Flag) {
 
 			fmt.Fprintf(
 				&appReactMap,
-				`,navifyApp%d=%s.lazy((()=>%s.%s("%s").then(%s.bind(%s,"%s"))))`,
+				`,navifyApp%d=%s.lazy((()=>new Promise(r=>Navify.Events.webpackLoaded.on(r)).then(()=>%s.%s("%s")).then(%s.bind(%s,"%s"))))`,
 				index, reactSymbs[0], reactSymbs[1], reactSymbs[2],
 				appName, reactSymbs[1], reactSymbs[1], appName)
 
