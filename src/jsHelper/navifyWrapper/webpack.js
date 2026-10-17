@@ -10,11 +10,11 @@ import { waitForURI } from "./webpack/uri.js";
 
 void (async function hotloadWebpackModules() {
   const getChunkQueue = () => window?.rspackChunk || window?.rspackChunkclient_web || window?.webpackChunkclient_web;
-  const chunkQueue = await waitFor(getChunkQueue, 50);
+  const chunkQueue = getChunkQueue() ?? (await waitFor(getChunkQueue, 50));
 
   // Force all webpack modules to load
   const require = chunkQueue.push([[Symbol()], {}, (re) => re]);
-  await waitFor(() => require.m, 50);
+  if (!require.m) await waitFor(() => require.m, 50);
   console.log("[navifyWrapper] Waiting for required webpack modules to load");
   let webpackDidCallback = false;
   // https://github.com/webpack/webpack/blob/main/lib/runtime/OnChunksLoadedRuntimeModule.js

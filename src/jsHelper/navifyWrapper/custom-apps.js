@@ -1,7 +1,18 @@
 import { createIconComponent } from "./icons.js";
 
 let navLinkFactoryCtx = null;
-export let refreshNavLinks = null;
+export const refreshNavLinks = () => {
+  const spotifyHistory = Navify.Platform?.History;
+  if (spotifyHistory?.replace && spotifyHistory.location) {
+    spotifyHistory.replace({
+      ...spotifyHistory.location,
+      state: { ...spotifyHistory.location.state, navifyRefresh: Date.now() },
+    });
+    return;
+  }
+
+  window.dispatchEvent(new PopStateEvent("popstate", { state: history.state }));
+};
 
 const manifestCache = new Map();
 
@@ -23,8 +34,7 @@ function getManifest(app) {
 }
 
 Navify._renderNavLinks = (list, isTouchScreenUi) => {
-  const [, refresh] = Navify.React.useReducer((x) => x + 1, 0);
-  refreshNavLinks = refresh;
+  if (!Navify.React?.createElement) return null;
 
   if (
     !Navify.ReactComponent.ButtonTertiary ||
@@ -34,7 +44,7 @@ Navify._renderNavLinks = (list, isTouchScreenUi) => {
     !Navify.Platform.History ||
     !Navify.Platform.LocalStorageAPI
   )
-    return;
+    return null;
 
   const navLinkFactory = isTouchScreenUi ? NavLinkGlobal : NavLinkSidebar;
 
